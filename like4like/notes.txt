@@ -1,0 +1,6 @@
+There are several codon tables now:
+- python_codon_tables package: https://github.com/Edinburgh-Genome-Foundry/codon-usage-tables, which uses:
+    - http://www.kazusa.or.jp/codon/ (derived from NCBI-GenBack Release 160.0 [2007])
+- Codon Statistic Database: http://codonstatsdb.unr.edu/
+    - From 2022, every species in RefSeq https://doi.org/10.1093/molbev/msac157       
+    - Use this one, can download the whole database flat (6 GB). Then turn CODON and Fraction into python dict a la pct
