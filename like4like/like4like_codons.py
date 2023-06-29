@@ -7,7 +7,7 @@ epilog_string = '''This is *not* codon optimisation, but instead an attempt to m
 Files generated:
   - ..._codons_table.tsv: Inverse codon table of the two organism listed in side-by-side columns.
   _ ..._all_changes.tsv: Lists every occurrence of codons changing in rarity order between species.
-  - ..._critical_changes.tsv: Lists only codon changes where fractions differ by some critical percentage (specified with -c)'''
+  - ..._critical_changes_X%.tsv: Lists only codon changes where fractions differ by some critical percentage (specified with -c)'''
 
 parser = argparse.ArgumentParser(prog='like4like_codons', description=desc_string, epilog=epilog_string, formatter_class=argparse.RawDescriptionHelpFormatter) #Don't line wrap the description
 parser.add_argument('-i', '--inputtaxID', type=str, help='Taxonomy ID number of the input species', required=True)
@@ -33,7 +33,6 @@ out_org_df = pd.DataFrame(columns=['Amino acid', out_org_name])
 
 codon_changes = []
 codon_changes_w_frac = []
-crit_percent = args.criticalpercent 
 
 for AA in AA_alphabet:
     inp_codons_sorted = {codon: frac for codon, frac in sorted(in_codon_table[AA].items(), key=lambda item: item[1])}
@@ -57,8 +56,7 @@ for AA in AA_alphabet:
             i_codon_frac = in_codon_table[AA][i_cod_sort_l[idx]] 
             o_codon_frac = out_codon_table[AA][o_cod_sort_l[idx]] 
             percent_diff = ( abs(float(i_codon_frac) - float(o_codon_frac)) / float(i_codon_frac)  ) * 100 
-            print(round(percent_diff))
-            if (round(percent_diff) > crit_percent):
+            if (round(percent_diff) > args.criticalpercent):
                 codon_changes_w_frac.append(f'{AA}: {i_cod_sort_l[idx]} ({in_codon_table[AA][i_cod_sort_l[idx]]}) -> {o_cod_sort_l[idx]} ({out_codon_table[AA][o_cod_sort_l[idx]]})')  # Long, unopt, line -- but will do   
 
 #Write out the files, like4like most used, but the changes could be useful
@@ -69,6 +67,6 @@ with open(f'{in_org_name}_{out_org_name}_like4like_codons_all_changes.tsv', 'w')
     for change in codon_changes: #change this if you want the fractions or not 
         changes_file.write(change + '\n')
 
-with open(f'{in_org_name}_{out_org_name}_like4like_codons_critical_changes.tsv', 'w') as crit_changes_file:
+with open(f'{in_org_name}_{out_org_name}_like4like_codons_critical_changes_{args.criticalpercent}%.tsv', 'w') as crit_changes_file:
     for change in codon_changes_w_frac: #change this if you want the fractions or not 
         crit_changes_file.write(change + '\n')
