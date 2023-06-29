@@ -5,6 +5,8 @@ import pandas as pd
 from pathlib import Path
 import pickle 
 
+#To Do: 
+
 # May add more codon table templates later: codon code can vary by organism: https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG1, 
 # Codon table date: 7 Jan 2019 
 # If I was to do that, I could just use 'differences from standard code' and modify a deepcopy of the standard inverse codon table
@@ -39,6 +41,7 @@ tsv_paths = p.glob('**/*.tsv')
 
 for tsv_path in tsv_paths:
     taxID = tsv_path.parts[1]
+    print(taxID)
     #print(f'Creating codon table for: {taxID}') # TO DO: consider adding progress bar: https://github.com/rsalmei/alive-progress
     #could add logic here to check which codon table applies based upon taxID
     taxID_codon_table = copy.deepcopy(standard_inverse_codon_table)  # deepcopy for new dict per taxID, not a reference that overwrites 
@@ -52,5 +55,8 @@ for tsv_path in tsv_paths:
         frac = round(fraction, 2)  #May have rounding errors so sum != 1. So far, off by 0.01--0.02 from python_codon_tables
         taxID_codon_table[AA_1let][codon] = frac
         taxID_codon_tables[taxID] = taxID_codon_table
+
+print("Here's the table for nelly:")
+print(taxID_codon_tables['nelly'])
 
 pickle.dump(taxID_codon_tables, open('codon_tables.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
