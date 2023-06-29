@@ -1,56 +1,31 @@
-#This script will generate the codon tables for a local extracted copy of codonstatsdb.unr.edu and put them into a pickle file (codon_tables.pkl) 
-from Bio.SeqUtils import seq1, seq3
-import copy
-import pandas as pd
-from pathlib import Path
-import pickle 
+nelly_codon_table = {'*': {'TAA': 0.01, 'TAG': 0.0, 'TGA': 0.0}, 'A': {'GCA': 0.35, 'GCC': 0.18, 'GCG': 0.13, 'GCT': 0.33}, 'C': {'TGC': 0.23, 'TGT': 0.77}, 'D': {'GAC': 0.12, 'GAT': 0.88}, 'E': {'GAA': 0.85, 'GAG': 0.15}, 'F': {'TTC': 0.23, 'TTT': 0.77}, 'G': {'GGA': 0.44, 'GGC': 0.1, 'GGG': 0.2, 'GGT': 0.27}, 'H': {'CAC': 0.19, 'CAT': 0.81}, 'I': {'ATA': 0.22, 'ATC': 0.22, 'ATT': 0.56}, 'K': {'AAA': 0.82, 'AAG': 0.18}, 'L': {'CTA': 0.09, 'CTC': 0.08, 'CTG': 0.04, 'CTT': 0.15, 'TTA': 0.48, 'TTG': 0.15}, 'M': {'ATG': 1.0}, 'N': {'AAC': 0.17, 'AAT': 0.83}, 'P': {'CCA': 0.29, 'CCC': 0.22, 'CCG': 0.14, 'CCT': 0.34}, 'Q': {'CAA': 0.87, 'CAG': 0.13}, 'R': {'AGA': 0.18, 'AGG': 0.05, 'CGA': 0.31, 'CGC': 0.11, 'CGG': 0.16, 'CGT': 0.18}, 'S': {'AGC': 0.06, 'AGT': 0.2, 'TCA': 0.23, 'TCC': 0.13, 'TCG': 0.1, 'TCT': 0.27}, 'T': {'ACA': 0.28, 'ACC': 0.24, 'ACG': 0.11, 'ACT': 0.36}, 'V': {'GTA': 0.31, 'GTC': 0.15, 'GTG': 0.21, 'GTT': 0.34}, 'W': {'TGG': 1.0}, 'Y': {'TAC': 0.14, 'TAT': 0.86}}
 
-# May add more codon table templates later: codon code can vary by organism: https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG1, 
-# Codon table date: 7 Jan 2019 
-# If I was to do that, I could just use 'differences from standard code' and modify a deepcopy of the standard inverse codon table
-standard_inverse_codon_table = {
-'*': {'TAA': 0.0, 'TAG': 0.0, 'TGA': 0.0}, 
-'A': {'GCA': 0.0, 'GCC': 0.0, 'GCG': 0.0, 'GCT': 0.0}, 
-'C': {'TGC': 0.0, 'TGT': 0.0}, 
-'D': {'GAC': 0.0, 'GAT': 0.0}, 
-'E': {'GAA': 0.0, 'GAG': 0.0}, 
-'F': {'TTC': 0.0, 'TTT': 0.0}, 
-'G': {'GGA': 0.0, 'GGC': 0.0, 'GGG': 0.0, 'GGT': 0.0}, 
-'H': {'CAC': 0.0, 'CAT': 0.0}, 
-'I': {'ATA': 0.0, 'ATC': 0.0, 'ATT': 0.0},
-'K': {'AAA': 0.0, 'AAG': 0.0},
-'L': {'CTA': 0.0, 'CTC': 0.0, 'CTG': 0.0, 'CTT': 0.0, 'TTA': 0.0, 'TTG': 0.0},
-'M': {'ATG': 0.0},
-'N': {'AAC': 0.0, 'AAT': 0.0},
-'P': {'CCA': 0.0, 'CCC': 0.0, 'CCG': 0.0, 'CCT': 0.0},
-'Q': {'CAA': 0.0, 'CAG': 0.0}, 
-'R': {'AGA': 0.0, 'AGG': 0.0, 'CGA': 0.0, 'CGC': 0.0, 'CGG': 0.0, 'CGT': 0.0},
-'S': {'AGC': 0.0, 'AGT': 0.0, 'TCA': 0.0, 'TCC': 0.0, 'TCG': 0.0, 'TCT': 0.0}, 
-'T': {'ACA': 0.0, 'ACC': 0.0, 'ACG': 0.0, 'ACT': 0.0}, 
-'V': {'GTA': 0.0, 'GTC': 0.0, 'GTG': 0.0, 'GTT': 0.0}, 
-'W': {'TGG': 0.0}, 
-'Y': {'TAC': 0.0, 'TAT': 0.0}
-}
+#TaxID 83333
+e_coli_codon_table = {'*': {'TAA': 0.64, 'TAG': 0.0, 'TGA': 0.36}, 'A': {'GCA': 0.21, 'GCC': 0.31, 'GCG': 0.38, 'GCT': 0.11}, 'C': {'TGC': 0.58, 'TGT': 0.42}, 'D': {'GAC': 0.35, 'GAT': 0.65}, 'E': {'GAA': 0.7, 'GAG': 0.3}, 'F': {'TTC': 0.43, 'TTT': 0.57}, 'G': {'GGA': 0.13, 'GGC': 0.46, 'GGG': 0.12, 'GGT': 0.29}, 'H': {'CAC': 0.45, 'CAT': 0.55}, 'I': {'ATA': 0.07, 'ATC': 0.35, 'ATT': 0.58}, 'K': {'AAA': 0.73, 'AAG': 0.27}, 'L': {'CTA': 0.05, 'CTC': 0.1, 'CTG': 0.46, 'CTT': 0.12, 'TTA': 0.15, 'TTG': 0.12}, 'M': {'ATG': 1.0}, 'N': {'AAC': 0.53, 'AAT': 0.47}, 'P': {'CCA': 0.14, 'CCC': 0.13, 'CCG': 0.55, 'CCT': 0.17}, 'Q': {'CAA': 0.3, 'CAG': 0.7}, 'R': {'AGA': 0.02, 'AGG': 0.03, 'CGA': 0.07, 'CGC': 0.44, 'CGG': 0.07, 'CGT': 0.36}, 'S': {'AGC': 0.33, 'AGT': 0.14, 'TCA': 0.15, 'TCC': 0.11, 'TCG': 0.16, 'TCT': 0.11}, 'T': {'ACA': 0.13, 'ACC': 0.47, 'ACG': 0.24, 'ACT': 0.16}, 'V': {'GTA': 0.17, 'GTC': 0.18, 'GTG': 0.4, 'GTT': 0.25}, 'W': {'TGG': 1.0}, 'Y': {'TAC': 0.47, 'TAT': 0.53}}
 
-taxID_codon_tables = {}
+AA_alphabet = ['*','A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
 
-p = Path('codon_data')
-tsv_paths = p.glob('**/*.tsv')
+input_codon_table = nelly_codon_table
+output_codon_table = e_coli_codon_table
 
-for tsv_path in tsv_paths:
-    taxID = tsv_path.parts[1]
-    #print(f'Creating codon table for: {taxID}') # TO DO: consider adding progress bar: https://github.com/rsalmei/alive-progress
-    #could add logic here to check which codon table applies based upon taxID
-    taxID_codon_table = copy.deepcopy(standard_inverse_codon_table)  # deepcopy for new dict per taxID, not a reference that overwrites 
-    df = pd.read_csv(tsv_path, sep='\t')
-    codon_frac_zip = zip(df['CODON'], df['Amino acid'], df['Fraction']) 
+codon_changes = []
+codon_changes_w_frac = []
+for AA in AA_alphabet:
+    inp_codons_sorted = {codon: frac for codon, frac in sorted(input_codon_table[AA].items(), key=lambda item: item[1])}
+    out_codons_sorted = {codon: frac for codon, frac in sorted(output_codon_table[AA].items(), key=lambda item: item[1])}
+    i_cod_sort_l = list(inp_codons_sorted) 
+    o_cod_sort_l = list(out_codons_sorted) 
+    #print(inp_codons_sorted)
+    #print(i_cod_sort_l)
+    #print(out_codons_sorted)
+    #print(o_cod_sort_l)
+     
+    if(len(i_cod_sort_l) != len(o_cod_sort_l)):
+        print(f'At amino acid {AA} the number of codons do not match between the organisms')
+    for idx in range(len(inp_codons_sorted)):  #Python > 3.7: regular dictionaries are ordered
+        if(i_cod_sort_l[idx] != o_cod_sort_l[idx]):
+            codon_changes.append(f'{AA}: {i_cod_sort_l[idx]} -> {o_cod_sort_l[idx]}')  
+            codon_changes_w_frac.append(f'{AA}: {i_cod_sort_l[idx]} ({input_codon_table[AA][i_cod_sort_l[idx]]}) -> {o_cod_sort_l[idx]} ({output_codon_table[AA][o_cod_sort_l[idx]]})')  # Long, unopt, line -- but will do   
 
-    for codon, AA_3let, fraction in codon_frac_zip:
-        AA_1let = seq1(AA_3let) #This does handle 'Stop'
-        if AA_1let == 'X':
-            AA_1let = '*' #Used as the termination charactered in python_codon_tables
-        frac = round(fraction, 2)  #May have rounding errors so sum != 1. So far, off by 0.01--0.02 from python_codon_tables
-        taxID_codon_table[AA_1let][codon] = frac
-        taxID_codon_tables[taxID] = taxID_codon_table
-
-pickle.dump(taxID_codon_tables, open('codon_tables.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+#print(*codon_changes, sep='\n') 
+prin(*codon_changes_w_frac, sep='\n') 
