@@ -1,6 +1,7 @@
 import pandas as pd
 import argparse
 
+
 desc_string = '''Matches codon tables of two species in terms of the ordering within each species of fraction of the time codon encodes for an  amino acid.'''
 epilog_string = '''This is *not* codon optimisation, but instead an attempt to match like4like in terms of codon rarity.
 
@@ -26,6 +27,8 @@ in_org_name = args.inputtaxID
 out_org_name = args.outputtaxID 
 
 #Maybe do a TaxID -> name translation here?? Worth it
+#in_org_name = 'Nelly'
+#out_org_name = 'E_coli'
 in_codon_table = nelly_codon_table
 out_codon_table = e_coli_codon_table
 in_org_df = pd.DataFrame(columns=['Amino acid', in_org_name])    
