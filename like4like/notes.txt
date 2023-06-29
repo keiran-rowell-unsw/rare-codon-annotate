@@ -1,6 +1,18 @@
-There are several codon tables now:
+There are several codon tables now, including:
 - python_codon_tables package: https://github.com/Edinburgh-Genome-Foundry/codon-usage-tables, which uses:
     - http://www.kazusa.or.jp/codon/ (derived from NCBI-GenBack Release 160.0 [2007])
-- Codon Statistic Database: http://codonstatsdb.unr.edu/
-    - From 2022, every species in RefSeq https://doi.org/10.1093/molbev/msac157       
-    - Use this one, can download the whole database flat (6 GB). Then turn CODON and Fraction into python dict a la pct
+- Codon Statistics Database: http://codonstatsdb.unr.edu/
+    - From 2022, every species in RefSeq. Paper: https://doi.org/10.1093/molbev/msac157       
+   
+Can download the whole flat database (6 GB) codonstatsdb.unr.edu/codonstatsdb_MONTHYEAR.tar.gz. Then run gen_tables_from_codonstatsdb.py to turn into nested dicts a la python_codon_tables 
+
+Prep before running gen_tables_from_codonstatsdb is as follows: 
+    - wget codon stats files from codonstatsdb.unr.edu/codonstatsdb_MONTHYEAR.tar.gz Manually at the moment since updates aren't frequent
+    - extract the .tar.gz file
+    - delete .RData and .Rhistory
+    - delete the gene, ribosomal, plastid, and mitochrondrial, bottom decile, .tsvs
+    - remove the 7 heading lines before tsv data on all files ---- tail -n +9 file.tsv > file.tsv
+    - remove double entry (two tables) from taxIDs 11269, 157592, 129875, 11082, 1476464, 562, 64320
+    - remove NA codons from taxIDs 129875, 108098, 10665
+    - delete taxID directory 592361 entirely, the formatting of the statistical table is corrupted and I don't want to make a judgement call
+    - rmdir any empty directories if there are any just to make sure 

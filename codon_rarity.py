@@ -55,7 +55,7 @@ else:
 #    return (like_for_like_codon_list)
 
 
-like4like(e_coli_codon_table, out_species_codon_table)
+#like4like(e_coli_codon_table, out_species_codon_table)
 
 
 
