@@ -1,7 +1,6 @@
 import pandas as pd
 import argparse
 
-
 desc_string = '''Matches codon tables of two species in terms of the ordering within each species of fraction of the time codon encodes for an  amino acid.'''
 epilog_string = '''This is *not* codon optimisation, but instead an attempt to match like4like in terms of codon rarity.
 
@@ -27,8 +26,6 @@ in_org_name = args.inputtaxID
 out_org_name = args.outputtaxID 
 
 #Maybe do a TaxID -> name translation here?? Worth it
-#in_org_name = 'Nelly'
-#out_org_name = 'E_coli'
 in_codon_table = nelly_codon_table
 out_codon_table = e_coli_codon_table
 in_org_df = pd.DataFrame(columns=['Amino acid', in_org_name])    
@@ -36,7 +33,7 @@ out_org_df = pd.DataFrame(columns=['Amino acid', out_org_name])
 
 codon_changes = []
 codon_changes_w_frac = []
-crit_frac_change_percent = 10
+crit_percent = args.criticalpercent 
 
 for AA in AA_alphabet:
     inp_codons_sorted = {codon: frac for codon, frac in sorted(in_codon_table[AA].items(), key=lambda item: item[1])}
@@ -59,7 +56,9 @@ for AA in AA_alphabet:
             codon_changes.append(f'{AA}: {i_cod_sort_l[idx]} -> {o_cod_sort_l[idx]}')  
             i_codon_frac = in_codon_table[AA][i_cod_sort_l[idx]] 
             o_codon_frac = out_codon_table[AA][o_cod_sort_l[idx]] 
-            if abs(float(i_codon_frac) - float(o_codon_frac))*100 > crit_frac_change_percent:
+            percent_diff = ( abs(float(i_codon_frac) - float(o_codon_frac)) / float(i_codon_frac)  ) * 100 
+            print(round(percent_diff))
+            if (round(percent_diff) > crit_percent):
                 codon_changes_w_frac.append(f'{AA}: {i_cod_sort_l[idx]} ({in_codon_table[AA][i_cod_sort_l[idx]]}) -> {o_cod_sort_l[idx]} ({out_codon_table[AA][o_cod_sort_l[idx]]})')  # Long, unopt, line -- but will do   
 
 #Write out the files, like4like most used, but the changes could be useful

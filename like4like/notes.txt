@@ -15,4 +15,18 @@ Prep before running gen_tables_from_codonstatsdb is as follows:
     - remove double entry (two tables) from taxIDs 11269, 157592, 129875, 11082, 1476464, 562, 64320
     - remove NA codons from taxIDs 129875, 108098, 10665
     - delete taxID directory 592361 entirely, the formatting of the statistical table is corrupted and I don't want to make a judgement call
-    - rmdir any empty directories if there are any just to make sure 
+    - rmdir any empty directories if there are any just to make sure
+
+#Next to start look at like4like in evolutionary conserved proteins
+
+#Stick with just looking at E. Coli for condon tables and rare codon usage  
+
+#Next :
+rare_codon.py
+- paste in RNA
+- use E. Coli codon table
+- pull PDB and EBI structures
+- replace the B-factor with the rarity 
+
+
+## Look at EBI database PDBS -- the format is always the same there from EBI AlphaFold -- biggest usecase
