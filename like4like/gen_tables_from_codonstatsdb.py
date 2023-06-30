@@ -5,7 +5,13 @@ import pandas as pd
 from pathlib import Path
 import pickle 
 
-#To Do: 
+
+#def compareM_to_condon_table(compareM_out.csv): # TO DO: if someone has a new species I can provide a processing pathway from the raw frequency output from compareM.
+
+# Steph has given me the data for 'Nelly' the archeon here: https://unsw-my.sharepoint.com/personal/z5062530_ad_unsw_edu_au/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fz5062530%5Fad%5Funsw%5Fedu%5Fau%2FDocuments%2FResearch%2FCodon%5FUsage%5F4%5FKeiran&ga=1
+
+
+# TO DO: 
 
 # May add more codon table templates later: codon code can vary by organism: https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG1, 
 # Codon table date: 7 Jan 2019 

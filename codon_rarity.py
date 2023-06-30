@@ -13,18 +13,21 @@ from unipressed import IdMappingClient
 # Use in a shellscript with -f or -p, rather than have positional args or ability to supply a list of files/PDBIDs 
 parser = argparse.ArgumentParser(prog='codon_rarity', description='Replaces the b-factor entries in a .pdb file with the codon rarity based upon species.')
 #group = parser.add_mutually_exclusive_group() #only one of -f or -p 
-#parser.add_argument('-f', '--filename', type=str, help='pdb file to annotate') #Disabling for now since I want to do automatic database searching
-parser.add_argument('-p', '--PDBID', type=str, help='RSCB Protein Data Bank ID to fetch .pdb file')
-parser.add_argument('-t', '--taxID',  type=str, help=f'Either TaxID, or species database from {pct.available_codon_tables_names}', required=True)
+parser.add_argument('-f', '--filename', type=str, help='pdb file to annotate') #Disabling for now since I want to do automatic database searching
 #parser.add_argument('-m', '--mRNA',  type=str, help=' ') #Fill fetch this automaticallly, but also let this overwrite. There's a clinvar database in uniprot
-parser.add_argument('-o', '--outfile', type=str, help='name out annotate .pdb output file')
+# Determine here which database to fetch from 
+parser.add_argument('-db', '--database', type=str, help='The database to query structure files from', choices=['EBI', 'PDB']) #consider -db_nuc and -db_prot
+parser.add_argument('-a', '--accessionID', type=str, help='The accession ID of the gene/protein being fetched')
+parser.add_argument('-p', '--PDBID', type=str, help='RSCB Protein Data Bank ID to fetch .pdb file')
+parser.add_argument('-t', '--taxID',  type=str, help=f'Either TaxID, or species database from {pct.available_codon_tables_names}') #TO DO: move away  from pct and use codontablesdb w/ taxID
 #parser.add_argument('-c', '--codon', type=str, help='the mutated codon that determines pathogenicity, give codon and location ') #Give the rarity difference number
+#like4like codons can be called with the -l flag
 #parser.add_argument('-l', '--like4like', type=str, help='Print a new codon_table that matches codon frequencies between species') 
+parser.add_argument('-o', '--outfile', type=str, help='name out annotate .pdb output file')
 args = parser.parse_args()
 
-
-#if (args.filename is not None): 
-#    file = Path(args.filename)
+if (args.filename is not None): 
+    file = Path(args.filename)
 
 if (args.PDBID is not None):
     PDBList().retrieve_pdb_file(args.PDBID, file_format='pdb', pdir='.', overwrite=True, obsolete=False) 
@@ -40,26 +43,32 @@ if (args.outfile is None):
 else:
     outfile = Path(args.outfile)
 
-#def replace_b_factor(pdb_contents):
+
+def convert_structure_IDs(struct_ID): #To switch between EBI, PDB, accession, etc, (using IdMappingClien). Do I want to fetch in this as well? 
+    pass 
+    # return struct_ID
+
+def fetch_structure_from_database(struct_ID, args.database): # To do the fetching from EBI, PDB etc. The format of the pdb file changes based on db 
+    pass  
+
+def read_pdb_contents(file, args.database): # TO DO: consider file -> pdbfile variable rename. Can Bio.PDB help here with reading (PDBIO.select pulling out 'REMARK', etc)
+    #pdb_contents = file.read_text()
+    #contents_w_condon_rarity = replace_b_factor(pdb_contents)
+    pass 
+
+
+#def like4like_codons(condon_table_species1, condon_table_species2):  #TO DO: incoporate like4like_codons.py into this function
+#    return (like_for_like_codon_list)
+
+#def replace_b_factor(pdb_contents, args.database):
     #write this replacement logic
     # should this value be diff between rarity in wt and current. Or just rare?
 #    print(codon_table)
-#    pdb_contents += repr(codon_table) #placeholder for now  
-#    return pdb_contents
+#    new_pdb_contents += repr(codon_table) #placeholder for now  
+#    outfile.open('w').write(contents_w_condon_rarity)  #need to make outfile_contents. TO DO: do I want replace_b_factor to write out. I think I just want it to return the replaced b-factor lines 
+#    return new_pdb_contents
 
-
-#def compareM_to_condon_table(compareM_out.csv):
-
-
-#def like4like_codons(condon_table_species1, condon_table_species2):
-#    return (like_for_like_codon_list)
-
-
-#like4like(e_coli_codon_table, out_species_codon_table)
-
-
-
-PDB_record = SeqIO.read(file, 'pdb-seqres') #fails on multimers b.c. multiple seqres entries 
+PDB_record = SeqIO.read(file, 'pdb-seqres') #fails on multimers b.c. multiple seqres entries # TO DO: put this reading and conversion logic in the functions above  
 PDB_res_seq = str(PDB_record.seq)
 
 #Use the UniProt number to link the PDBID to the RNA database, the gene will known
@@ -104,6 +113,3 @@ for residue, codon in  zip(residues, codons):
         #print(rarity) 
 #From RNA sequence, look up codon_rarity table then replace the b-factor
 
-#pdb_contents = file.read_text()
-#contents_w_condon_rarity = replace_b_factor(pdb_contents)
-#outfile.open('w').write(contents_w_condon_rarity)  #need to make outfile_contents 
