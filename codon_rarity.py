@@ -4,6 +4,7 @@ from Bio import Entrez  #The way to access the RefSeq database programmatically
 from Bio import SeqIO 
 from Bio.PDB import PDBList
 from pathlib import Path
+import pickle
 import python_codon_tables as pct 
 import time 
 from unipressed import IdMappingClient
@@ -17,14 +18,43 @@ parser.add_argument('-f', '--filename', type=str, help='pdb file to annotate') #
 #parser.add_argument('-m', '--mRNA',  type=str, help=' ') #Fill fetch this automaticallly, but also let this overwrite. There's a clinvar database in uniprot
 # Determine here which database to fetch from 
 parser.add_argument('-db', '--database', type=str, help='The database to query structure files from', choices=['EBI', 'PDB']) #consider -db_nuc and -db_prot
-parser.add_argument('-a', '--accessionID', type=str, help='The accession ID of the gene/protein being fetched')
-parser.add_argument('-p', '--PDBID', type=str, help='RSCB Protein Data Bank ID to fetch .pdb file')
-parser.add_argument('-t', '--taxID',  type=str, help=f'Either TaxID, or species database from {pct.available_codon_tables_names}') #TO DO: move away  from pct and use codontablesdb w/ taxID
+parser.add_argument('-acc', '--accessionID', type=str, help='The accession ID of the gene/protein being fetched')
+parser.add_argument('-pdb', '--PDBID', type=str, help='RSCB Protein Data Bank ID to fetch .pdb file')
+parser.add_argument('-tax', '--taxID',  type=str, help=f'Either TaxID, or species database from {pct.available_codon_tables_names}') #TO DO: move away  from pct and use codontablesdb w/ taxID
+parser.add_argument('-ct', '--codontables',  type=str, help=f'Pickle file (usually .pkl) of the codon tables, organised by taxID', default='codon_tables.pkl')
 #parser.add_argument('-c', '--codon', type=str, help='the mutated codon that determines pathogenicity, give codon and location ') #Give the rarity difference number
 #like4like codons can be called with the -l flag
 #parser.add_argument('-l', '--like4like', type=str, help='Print a new codon_table that matches codon frequencies between species') 
 parser.add_argument('-o', '--outfile', type=str, help='name out annotate .pdb output file')
 args = parser.parse_args()
+
+
+# TO DO: don't write out this functions at the moment, just hardcode from E_coli and Nelly codon tables, focus on replace b-factor function
+def convert_structure_IDs(struct_ID): #To switch between EBI, PDB, accession, etc, (using IdMappingClien). Do I want to fetch in this as well? 
+    pass 
+    # return struct_ID
+
+def fetch_structure_from_database(struct_ID, args.database): # To do the fetching from EBI, PDB etc. The format of the pdb file changes based on db 
+    pass  
+
+def read_pdb_contents(file, args.database): # TO DO: consider file -> pdbfile variable rename. Can Bio.PDB help here with reading (PDBIO.select pulling out 'REMARK', etc)
+    #pdb_contents = file.read_text()
+    #contents_w_condon_rarity = replace_b_factor(pdb_contents)
+    pass 
+
+def load_codon_tables(args.codon_tables):
+    pass  
+
+#def like4like_codons(condon_table_species1, condon_table_species2):  #TO DO: incoporate like4like_codons.py into this function
+#    return (like_for_like_codon_list)
+
+#def replace_b_factor(pdb_contents, args.database):
+    #write this replacement logic
+    # should this value be diff between rarity in wt and current. Or just rare?
+#    print(codon_table)
+#    new_pdb_contents += repr(codon_table) #placeholder for now  
+#    outfile.open('w').write(contents_w_condon_rarity)  #need to make outfile_contents. TO DO: do I want replace_b_factor to write out. I think I just want it to return the replaced b-factor lines 
+#    return new_pdb_contents
 
 if (args.filename is not None): 
     file = Path(args.filename)
@@ -43,30 +73,6 @@ if (args.outfile is None):
 else:
     outfile = Path(args.outfile)
 
-
-def convert_structure_IDs(struct_ID): #To switch between EBI, PDB, accession, etc, (using IdMappingClien). Do I want to fetch in this as well? 
-    pass 
-    # return struct_ID
-
-def fetch_structure_from_database(struct_ID, args.database): # To do the fetching from EBI, PDB etc. The format of the pdb file changes based on db 
-    pass  
-
-def read_pdb_contents(file, args.database): # TO DO: consider file -> pdbfile variable rename. Can Bio.PDB help here with reading (PDBIO.select pulling out 'REMARK', etc)
-    #pdb_contents = file.read_text()
-    #contents_w_condon_rarity = replace_b_factor(pdb_contents)
-    pass 
-
-
-#def like4like_codons(condon_table_species1, condon_table_species2):  #TO DO: incoporate like4like_codons.py into this function
-#    return (like_for_like_codon_list)
-
-#def replace_b_factor(pdb_contents, args.database):
-    #write this replacement logic
-    # should this value be diff between rarity in wt and current. Or just rare?
-#    print(codon_table)
-#    new_pdb_contents += repr(codon_table) #placeholder for now  
-#    outfile.open('w').write(contents_w_condon_rarity)  #need to make outfile_contents. TO DO: do I want replace_b_factor to write out. I think I just want it to return the replaced b-factor lines 
-#    return new_pdb_contents
 
 PDB_record = SeqIO.read(file, 'pdb-seqres') #fails on multimers b.c. multiple seqres entries # TO DO: put this reading and conversion logic in the functions above  
 PDB_res_seq = str(PDB_record.seq)
