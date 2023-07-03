@@ -16,6 +16,7 @@ import pickle
 # May add more codon table templates later: codon code can vary by organism: https://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG1, 
 # Codon table date: 7 Jan 2019 
 # If I was to do that, I could just use 'differences from standard code' and modify a deepcopy of the standard inverse codon table
+# Biopython also has a way to generate it in table format: https://biopython.org/docs/1.75/api/Bio.Data.CodonTable.html#Bio.Data.CodonTable.CodonTable
 standard_inverse_codon_table = {
 '*': {'TAA': 0.0, 'TAG': 0.0, 'TGA': 0.0}, 
 'A': {'GCA': 0.0, 'GCC': 0.0, 'GCG': 0.0, 'GCT': 0.0}, 
