@@ -10,22 +10,15 @@ import pickle
 import time 
 from unipressed import IdMappingClient
 
-# Use in a shellscript with -f or -p, rather than have positional args or ability to supply a list of files/PDBIDs 
 parser = argparse.ArgumentParser(prog='codon_rarity', description='Replaces the b-factor entries in a .pdb file with the codon rarity based upon species.')
 parser.add_argument('-f', '--filename', type=str, help='pdb file to annotate') #Disabling for now since I want to do automatic database searching
 parser.add_argument('-nuc', '--nucseq',  type=str, help='A manually entered nucleic acid sequence to split into codons ') 
 parser.add_argument('-acc', '--accessionID', type=str, help='The accession ID of the gene/protein being fetched')
 parser.add_argument('-pdb', '--PDBID', type=str, help='RSCB Protein Data Bank ID to fetch .pdb file')
-parser.add_argument('-tax', '--taxID',  type=str, help='TaxID to load from the codon_tables .pkl file') #Instead of python_codon_tables, use codontablesdb.unr.edu w/ taxID
+parser.add_argument('-tax', '--taxID',  type=str, help='TaxID to load the relevant codon rarity table', required=True)
 parser.add_argument('-ct', '--codontables',  type=str, help=f'Pickle file (usually .pkl) of the codon tables, organised by taxID', default='codon_tables.pkl')
-#parser.add_argument('-c', '--codon', type=str, help='the mutated codon that determines pathogenicity, give codon and location ') #Give the rarity difference number
-#like4like codons can be called with the -l flag
-#parser.add_argument('-l', '--like4like', type=str, help='Print a new codon_table that matches codon frequencies between species') 
 parser.add_argument('-o', '--outfile', type=str, help='name out annotate .pdb output file')
 args = parser.parse_args()
-PDBID = args.PDBID
-filename = args.filename
-outfile = args.outfile
 
 def filenames_from_args(PDBID, filename, outfile): 
     pdbfile = ''
@@ -45,6 +38,11 @@ def filenames_from_args(PDBID, filename, outfile):
 
     return pdbfile, outfile
 
+def load_codon_table(codon_tables, taxID):  #I can probably have the codon table inbuilt
+    with open(codon_tables, 'rb') as pickle_file:
+        codon_tables = pickle.load(pickle_file)
+    return codon_tables[taxID]
+
 def map_IDs_UniProt(PDBID):
     print('PDBID is: {}' .format(PDBID))
 
@@ -58,7 +56,7 @@ def map_IDs_UniProt(PDBID):
     time.sleep(1)
     RefSeq_nucs_result = list(RefSeq_nuc_req.each_result())
     RefSeq_nuc_ID = RefSeq_nucs_result[0]['to'] 
-    print('RefSeq_nuc is: {}' .format(RefSeq_nuc_ID))
+    print('RefSeq_nuc_ID is: {}' .format(RefSeq_nuc_ID))
     return UniProtKB_ID, RefSeq_nuc_ID
 
 def pdbfile2struct(pdbfile): # TO DO: consider file -> pdbfile variable rename. Can Bio.PDB help here with reading (PDBIO.select pulling out 'REMARK', etc)
@@ -66,6 +64,8 @@ def pdbfile2struct(pdbfile): # TO DO: consider file -> pdbfile variable rename. 
     struct_namme = str(pdbfile).replace('.pdb', '')
     pdb_struct = parser.get_structure('test', pdbfile)
     return pdb_struct
+
+def validate_pdb_residues(pdb_struc): # Want to things like "HOH", non standard amino acids not in place. Use BioPython PDB alphabet or PDB.PDBIO.Select select_residue() https://biopython.org/docs/1.76/api/Bio.PDB.PDBIO.html
 
 def fetch_nucseq(RefSeq_nuc_ID): #Get the FASTA file of the sequence from RefSeq_Nucleotide ID
     Entrez.email = "k.rowell@unsw.edu.au" #TO DO: remove/update once there are other users of the code 
@@ -82,11 +82,6 @@ def nucseq2codons(pdb_struct, nucseq):
         codons.append(codon)
     return codons
 
-#def load_codon_tables(args.codon_tables, args.taxID):  #I can probably have the codon table inbuilt
-#    pass
-
-# This is nelly, but should come from the pickle file 
-codon_table = {'*': {'TAA': 0.01, 'TAG': 0.0, 'TGA': 0.0}, 'A': {'GCA': 0.35, 'GCC': 0.18, 'GCG': 0.13, 'GCT': 0.33}, 'C': {'TGC': 0.23, 'TGT': 0.77}, 'D': {'GAC': 0.12, 'GAT': 0.88}, 'E': {'GAA': 0.85, 'GAG': 0.15}, 'F': {'TTC': 0.23, 'TTT': 0.77}, 'G': {'GGA': 0.44, 'GGC': 0.1, 'GGG': 0.2, 'GGT': 0.27}, 'H': {'CAC': 0.19, 'CAT': 0.81}, 'I': {'ATA': 0.22, 'ATC': 0.22, 'ATT': 0.56}, 'K': {'AAA': 0.82, 'AAG': 0.18}, 'L': {'CTA': 0.09, 'CTC': 0.08, 'CTG': 0.04, 'CTT': 0.15, 'TTA': 0.48, 'TTG': 0.15}, 'M': {'ATG': 1.0}, 'N': {'AAC': 0.17, 'AAT': 0.83}, 'P': {'CCA': 0.29, 'CCC': 0.22, 'CCG': 0.14, 'CCT': 0.34}, 'Q': {'CAA': 0.87, 'CAG': 0.13}, 'R': {'AGA': 0.18, 'AGG': 0.05, 'CGA': 0.31, 'CGC': 0.11, 'CGG': 0.16, 'CGT': 0.18}, 'S': {'AGC': 0.06, 'AGT': 0.2, 'TCA': 0.23, 'TCC': 0.13, 'TCG': 0.1, 'TCT': 0.27}, 'T': {'ACA': 0.28, 'ACC': 0.24, 'ACG': 0.11, 'ACT': 0.36}, 'V': {'GTA': 0.31, 'GTC': 0.15, 'GTG': 0.21, 'GTT': 0.34}, 'W': {'TGG': 1.0}, 'Y': {'TAC': 0.14, 'TAT': 0.86}} 
 
 def replace_b_factor(pdb_struct, codons, codon_table): 
     a_idx = 0  # no neat way to link idx to enumerate
@@ -110,16 +105,24 @@ def replace_b_factor(pdb_struct, codons, codon_table):
                     atom_line = f'ATOM\t {a_idx}\t {a_name}\t {res_3let}\t {chain_id}\t {res_idx}\t {a_coords}\t {a_occ}\t {codon_rarity_val}\t {a_name}'
                     print(atom_line) 
 
-#def like4like_codons(condon_table_species1, condon_table_species2):  #TO DO: incoporate like4like_codons.py into this function
-#    return (like_for_like_codon_list)
-
-pdbfile, outfile = filenames_from_args(PDBID, filename, outfile)
-UniProtKD_ID, RefSeq_nuc_ID = map_IDs_UniProt(PDBID)
+pdbfile, outfile = filenames_from_args(args.PDBID, args.filename, args.outfile)
+codon_table = load_codon_table(args.codontables, args.taxID)
+print(f'Codon fraction table for {args.taxID} is {codon_table}')
+UniProtKD_ID, RefSeq_nuc_ID = map_IDs_UniProt(args.PDBID)
 pdb_struct = pdbfile2struct(pdbfile)
-if args.nucseq is None:
-    nucseq = fetch_nucseq(RefSeq_nuc_ID)
-else:
+#validate_pdb_residues()
+
+#### from here testing if residue match codons..
+pdb_residues = []  
+for residue in pdb_struct.get_residues():
+    pdb_residues.append(residue.get_resname())
+print(f'The residue sequence in the protein is: {pdb_residues}')
+#### 
+if args.nucseq is not None: #Need to decide which overrides
     seq_record = SeqIO.read(args.nucseq, 'fasta') 
     nucseq = str(seq_record.seq)
+if RefSeq_nuc_ID is not None:
+    nucseq = fetch_nucseq(RefSeq_nuc_ID)
+    print(f'The nucleic acid sequence from RefSeq is: {nucseq}')
 codons = nucseq2codons(pdb_struct, nucseq)
-replace_b_factor(pdb_struct, codons, codon_table)  
+#replace_b_factor(pdb_struct, codons, codon_table)  
