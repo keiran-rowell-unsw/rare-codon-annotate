@@ -29,4 +29,8 @@ rare_codon.py
 - replace the B-factor with the rarity 
 
 
-## Look at EBI database PDBS -- the format is always the same there from EBI AlphaFold -- biggest usecase
+## Look at EBI database PDBs -- the format is always the same there from EBI AlphaFold -- biggest usecase
+
+
+## Issues:
+    - Why are some TER '*' stop codons listed as 0.0 in fraction 
