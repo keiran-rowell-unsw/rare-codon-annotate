@@ -1,0 +1,13 @@
+ Want to find some E. Coli proteins that has:
+1. A full nucleotide available (easier b.c. no splicing)
+2. A solved structure pdb file (no garuantee that the nucleotide seq is an exact link, if E coli should be close)
+3. Interesting structural features that could be implicated in a translational speed bottleneck, potentially due to rare codons
+
+
+The RefSeq data and PDB AA sequences will have objects not in the other (e.g. poly-A in the former, ligands HOH in the latter). So manually AA alignment for now, think about robust error handling in databases only if/when this project has wings.
+
+Candidates: 
+    - ROP/ROM protein: simple, many variants (inc. res. deletion), are there rare codons? 
+    - MerB alykl mercury lyase:  interesting motifs looping between alpha-helices, diverse AA usage 
+    - Apo-NikR, Ni responsive Trans.Fact.: cons tetramer, pros interesting structure
+    - Succinate (e.g. 1NEK): 4 subunits joined to still keep an extended set of a-helices. Maybe too complex, but check at those hairpin turns

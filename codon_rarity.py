@@ -65,7 +65,7 @@ def pdbfile2struct(pdbfile): # TO DO: consider file -> pdbfile variable rename. 
     pdb_struct = parser.get_structure('test', pdbfile)
     return pdb_struct
 
-def validate_pdb_residues(pdb_struc): # Want to things like "HOH", non standard amino acids not in place. Use BioPython PDB alphabet or PDB.PDBIO.Select select_residue() https://biopython.org/docs/1.76/api/Bio.PDB.PDBIO.html
+#def validate_pdb_residues(pdb_struc): # Want to things like "HOH", non standard amino acids not in place. Use BioPython PDB alphabet or PDB.PDBIO.Select select_residue() https://biopython.org/docs/1.76/api/Bio.PDB.PDBIO.html
 
 def fetch_nucseq(RefSeq_nuc_ID): #Get the FASTA file of the sequence from RefSeq_Nucleotide ID
     Entrez.email = "k.rowell@unsw.edu.au" #TO DO: remove/update once there are other users of the code 
