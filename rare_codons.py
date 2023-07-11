@@ -82,25 +82,16 @@ def nucseq2codons(pdb_struct, nucseq):
 
 def replace_b_factor(pdb_struct, codons, codon_table): 
     a_idx = 0  # no neat way to link idx to enumerate
+    res_idx = 0
     for model in pdb_struct: #doesn't hurt, but check later if there are pdbs with multiple models
         for chain in model:
-            for res_idx, residue in enumerate(chain):
+            for residue in chain:
+                res_idx += 1
+                res_3let = residue.get_resname()
+                res_1let = seq1(res_3let)
                 for atom in residue:
-                    a_idx +=1
-                    # residues from the DNA sequence and the PDB aren't matching..  
-                    res_3let = residue.get_resname()
-                    res_1let = seq1(res_3let)
-                    print(res_1let)
-                    print(codons[res_idx+1]) 
-                    codon_rarity_val = codon_table[res_1let][codons[res_idx+1]] #skip the start codon 'M'
-                    # Set up variables for printing the ATOM line
-                    a_name = atom.get_name()
-                    chain_id = chain.get_id().replace('<Chain id=','').replace('>','')
-                    a_coords = numpy.array2string(atom.get_coord()).replace('[','').replace(']','')
-                    a_occ = atom.get_occupancy()
-                    #a_bfactor = atom.get_bfactor()  #is replaced by rarity value in the 2nd-to-last column 
-                    atom_line = f'ATOM\t {a_idx}\t {a_name}\t {res_3let}\t {chain_id}\t {res_idx}\t {a_coords}\t {a_occ}\t {codon_rarity_val}\t {a_name}'
-                    print(atom_line) 
+                    codon_rarity_val = codon_table[res_1let][codons[res_idx-1]]
+                    atom.set_bfactor(codon_rarity_val) #this is used in AlphaFold to colour residue position certainty
 
 pdbfile, outfile = filenames_from_args(args.PDBID, args.filename, args.outfile)
 codon_table = load_codon_table(args.codontables, args.taxID)
@@ -122,4 +113,4 @@ if RefSeq_nuc_ID is not None:
     nucseq = fetch_nucseq(RefSeq_nuc_ID)
     print(f'The nucleic acid sequence from RefSeq is: {nucseq}')
 codons = nucseq2codons(pdb_struct, nucseq)
-#replace_b_factor(pdb_struct, codons, codon_table)  
+3replace_b_factor(pdb_struct, codons, codon_table)  

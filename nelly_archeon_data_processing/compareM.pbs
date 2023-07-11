@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=100gb
+#PBS -l walltime=2:00:00
+#PBS -M s.nobs@student.unsw.edu.au
+#PBS -m ae
+#PBS -j oe
+
+
+cd /srv/scratch/z5062530/prodigal/coding_regions
+
+comparem stop_usage -x fa -c 8 /srv/scratch/z5062530/prodigal/coding_regions/bin217 /srv/scratch/z5062530/prodigal/coding_regions/bin217_stop_usage.tsv
+#comparem codon_usage -x fa --keep_ambiguous -c 8 /srv/scratch/z5062530/prodigal/coding_regions/bin217 /srv/scratch/z5062530/prodigal/coding_regions/bin217_stop_usage.tsv

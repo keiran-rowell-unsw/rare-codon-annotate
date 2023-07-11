@@ -1,7 +1,7 @@
 import argparse
 import Bio 
 from Bio import SeqIO 
-from Bio.PDB import PDBList, PDBParser
+from Bio.PDB import PDBList, PDBParser, PDBIO
 from Bio.SeqUtils import seq1, seq3 
 from pathlib import Path
 import pickle
@@ -22,9 +22,8 @@ def load_codon_table(codon_tables, taxID):  #I can probably have the codon table
     return codon_tables[taxID]
 
 def pdbfile2struct(pdbfile): # TO DO: consider file -> pdbfile variable rename. Can Bio.PDB help here with reading (PDBIO.select pulling out 'REMARK', etc)
-    parser = PDBParser()
     struct_name = str(pdbfile).replace('.pdb', '')
-    pdb_struct = parser.get_structure(struct_name, pdbfile)
+    pdb_struct = PDBParser().get_structure(struct_name, pdbfile)
     return pdb_struct
     
 def nucseq2codons(nucseq):
@@ -32,7 +31,6 @@ def nucseq2codons(nucseq):
     return codons
 
 def replace_b_factor(pdb_struct, codons, codon_table): 
-    new_pdb_contents = [] 
     a_idx = 0  # no neat way to link idx to enumerate
     res_idx = 0
     for model in pdb_struct: #doesn't hurt, but check later if there are pdbs with multiple models
@@ -41,24 +39,12 @@ def replace_b_factor(pdb_struct, codons, codon_table):
                 res_idx += 1 
                 res_3let = residue.get_resname()
                 res_1let = seq1(res_3let)
-                #print(res_1let)
                 for atom in residue:
-                    a_idx +=1
                     codon_rarity_val = codon_table[res_1let][codons[res_idx-1]] 
-                    # Set up variables for printing the ATOM line
-                    a_name = atom.get_name()
-                    chain_id = chain.get_id().replace('<Chain id=','').replace('>','')
-                    a_coords = numpy.array2string(atom.get_coord()).replace('[','').replace(']','')
-                    a_occ = atom.get_occupancy()
-                    #a_bfactor = atom.get_bfactor()  #is replaced by rarity value in the 2nd-to-last column 
-                    atom_line = f'ATOM\t {a_idx}\t {a_name}\t {res_3let}\t {chain_id}\t {res_idx}\t {a_coords}\t {a_occ}\t {codon_rarity_val}\t {a_name}\n'
-                    new_pdb_contents.append(atom_line)
-        new_pdb_contents.append(f'TER\t {a_idx+1}\t  \t {res_3let}\t {chain_id}\t {res_idx}\n') 
-        new_pdb_contents.append('END') 
-    return new_pdb_contents
+                    atom.set_bfactor(codon_rarity_val) #this is used in AlphaFold to colour residue position certainty
+   
     
 pdbfile = Path(args.PDBID)
-outfile = Path(args.outfile)
 codon_table = load_codon_table(args.codontables, args.taxID)
 #print(f'Codon fraction table for {args.taxID} is {codon_table}')
 pdb_struct = pdbfile2struct(pdbfile)
@@ -68,5 +54,7 @@ if args.nucseq is not None: #Need to decide which overrides
    #print(f'The nucleic acid sequence is: {nucseq}')
 codons = nucseq2codons(nucseq)
 #print(codons)
-new_pdb_contents = replace_b_factor(pdb_struct, codons, codon_table) 
-outfile.write_text(''.join(new_pdb_contents))
+replace_b_factor(pdb_struct, codons, codon_table) 
+io=PDBIO()
+io.set_structure(pdb_struct) 
+io.save(args.outfile)

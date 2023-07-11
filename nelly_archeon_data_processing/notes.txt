@@ -1,0 +1,13 @@
+* compareM.pbs - the bash script I used to run compareM
+* compare_codon_usage_output.tsv – the output of running compareM on one genome
+* multiMAG_compareM_output – the output of running compareM on multiple genomes
+* manual_like4like_table.xlsx – my manual codon translation table
+* manual_like4like_table.txt – the codon translation table that was used as input for the python script
+* codon_replacement.py – the python script made to do the job
+
+Here’s the github link for the softwares I used:
+* Prodigal:  https://github.com/hyattpd/Prodigal - I used prodigal to generate a fasta file of the coding sequence (CDS) of a genome which was used as my input for CompareM. CompareM can also use Prodigal to do the same thing, I had just done it previously myself.
+* CompareM: https://github.com/donovan-h-parks/CompareM/blob/master/users_guide.pdf
+
+Cheers,
+Steph
