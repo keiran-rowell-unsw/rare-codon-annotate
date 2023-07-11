@@ -76,10 +76,7 @@ def fetch_nucseq(RefSeq_nuc_ID): #Get the FASTA file of the sequence from RefSeq
     return RefSeq_nuc_seq
     
 def nucseq2codons(pdb_struct, nucseq):
-    codons = [] 
-    for i, residue in enumerate(pdb_struct.get_residues()):
-        codon = str(nucseq[i:i+3])
-        codons.append(codon)
+    codons = [nucseq[i:i+3] for i in range(0, len(nucseq), 3)] 
     return codons
 
 
