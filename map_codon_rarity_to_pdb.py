@@ -8,7 +8,7 @@ import pickle
 import numpy
 import math
 
-parser = argparse.ArgumentParser(prog='map viral rare codons', description='testing for mapping rare codon use in Ebola and HepB viral n    ucleic acid sequences to AF2 .pdb structures')
+parser = argparse.ArgumentParser(prog='map  rare codons', description='testing for mapping rare codon use in Ebola and HepB viral n    ucleic acid sequences to AF2 .pdb structures')
 parser.add_argument('-nuc', '--nucseq',  type=str, help='A manually entered nucleic acid sequence to split into codons ') 
 parser.add_argument('-pdb', '--PDBID', type=str, help='RSCB Protein Data Bank ID to fetch .pdb file')
 parser.add_argument('-tax', '--taxID',  type=str, help='TaxID to load the relevant codon rarity table', required=True)

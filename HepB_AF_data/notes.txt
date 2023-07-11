@@ -1,4 +1,8 @@
 taxID: 10407
 Entry was in the codon table https://www.kazusa.or.jp/codon/cgi-bin/showcodon.cgi?species=106821, but not codonstatisticsdb.nru.edu. Added manually.
 
-Codon table - standard 1: https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=10407 
+Codon table - standard 1: https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=info&id=10407
+
+
+good visualisation of codon rarity difference pdb files:
+spectrum b, blue_white_red, selection=ALL 
