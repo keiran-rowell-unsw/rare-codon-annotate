@@ -40,22 +40,22 @@ def replace_b_factor(pdb_struct, codons, codon_table):
                 res_idx += 1 
                 res_3let = residue.get_resname()
                 res_1let = seq1(res_3let)
-                print(f'Residue index: {res_idx}, AA is: {res_1let}, Codon is: {codons[res_idx-1]}')
+                codon_rarity_val = codon_table[res_1let][codons[res_idx-1]] 
+                print(f'Residue index: {res_idx}, AA is: {res_1let}, Codon is: {codons[res_idx-1]}, Rarity is: {codon_rarity_val}')
                 for atom in residue:
-                    codon_rarity_val = codon_table[res_1let][codons[res_idx-1]] 
                     atom.set_bfactor(codon_rarity_val) #this is used in AlphaFold to colour residue position certainty
    
     
 pdbfile = Path(args.PDBID)
 codon_table = load_codon_table(args.codontables, args.taxID)
-print(f'Codon fraction table for {args.taxID} is {codon_table}')
+#print(f'Codon fraction table for {args.taxID} is {codon_table}')
 pdb_struct = pdbfile2struct(pdbfile)
 if args.nucseq is not None: #Need to decide which overrides
     seq_record = SeqIO.read(args.nucseq, 'fasta') 
     nucseq = str(seq_record.seq).upper()
-    print(f'The nucleic acid sequence is: {nucseq}')
+    #print(f'The nucleic acid sequence is: {nucseq}')
 codons = nucseq2codons(nucseq)
-print(codons)
+#print(codons)
 replace_b_factor(pdb_struct, codons, codon_table) 
 io=PDBIO()
 io.set_structure(pdb_struct) 
