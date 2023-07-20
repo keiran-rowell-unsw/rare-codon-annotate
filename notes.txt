@@ -11,3 +11,10 @@ Candidates:
     - MerB alykl mercury lyase:  interesting motifs looping between alpha-helices, diverse AA usage 
     - Apo-NikR, Ni responsive Trans.Fact.: cons tetramer, pros interesting structure
     - Succinate (e.g. 1NEK): 4 subunits joined to still keep an extended set of a-helices. Maybe too complex, but check at those hairpin turns
+
+
+Long-term improvement:
+  - Explore what a sensible rarity value cut-off is for model organisms, have option to only report rare codons
+  - Link to Ramachandran of amino acids at structurally crucial positions
+  - *really* important candidate codons are *both* for amino acids that are at important positions *and* rare for that organism
+  - Report these really important candidate codons in the python scripts so the user can inspect
