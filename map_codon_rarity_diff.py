@@ -34,18 +34,22 @@ def nucseq2codons(nucseq):
 def replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out): 
     a_idx = 0  # no neat way to link idx to enumerate
     res_idx = 0
+    rarity_sum = 0 
     for model in pdb_struct: #doesn't hurt, but check later if there are pdbs with multiple models
         for chain in model:
             for residue in chain:
                 res_idx += 1 
                 res_3let = residue.get_resname()
                 res_1let = seq1(res_3let)
+                codon_rarity_in = codon_table_in[res_1let][codons[res_idx-1]] 
+                codon_rarity_out = codon_table_out[res_1let][codons[res_idx-1]]
+                codon_rarity_diff = codon_rarity_out - codon_rarity_in
+                rarity_sum += codon_rarity_diff #rarity_sum <- rarity_sum(prev) + codon_rarity_diff(now)
                 for atom in residue:
-                    codon_rarity_in = codon_table_in[res_1let][codons[res_idx-1]] 
-                    codon_rarity_out = codon_table_out[res_1let][codons[res_idx-1]]
-                    codon_rarity_diff = codon_rarity_out - codon_rarity_in 
                     atom.set_bfactor(codon_rarity_diff) #this is used in AlphaFold to colour residue position certainty
    
+    avg_rarity_diff = rarity_sum / res_idx
+    return(avg_rarity_diff)
     
 pdbfile = Path(args.PDBID)
 codon_table_in, codon_table_out = load_codon_tables(args.codontables, args.taxIDin, args.taxIDout)
@@ -57,7 +61,8 @@ if args.nucseq is not None: #Need to decide which overrides
    #print(f'The nucleic acid sequence is: {nucseq}')
 codons = nucseq2codons(nucseq)
 #print(codons)
-replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out) 
+avg_rarity_diff = replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out) 
+print(f'The mean difference of rarity of all codon positions between native and host is: {avg_rarity_diff}')
 io=PDBIO()
 io.set_structure(pdb_struct) 
 io.save(args.outfile)
