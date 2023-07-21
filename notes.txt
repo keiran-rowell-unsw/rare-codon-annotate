@@ -14,9 +14,13 @@ Candidates:
 
 
 Long-term improvement:
+  - compare automatic lik4like with Steph's manual ones for Nelly archeon 
   - Explore what a sensible rarity value cut-off is for model organisms, have option to only report rare codons
   - Link to Ramachandran of amino acids at structurally crucial positions
     - There's a python package for Ramachandran plots generation called COOT. Input is a pdb file.     (sort out what pdb data we actually want, and how to link with nucleic acid seqs downloading them automatically is easy) 
     - N.B. AlphaFold has shortcomings with predicting Ramachadran plots, but experimentally solved structures are more sensible for Ramachandran params 
   - *really* important candidate codons are *both* for amino acids that are at important positions *and* rare for that organism
   - Report these really important candidate codons in the python scripts so the user can inspect
+  - Chances are any single numerical value won't work: want mean, median, std dev, and visual info...
+  - Can you turn the rarity at each position into an array -> 2D 'stripe' of colours of those values.
+  - You could then line up these 'stripes' of pixels vertically between different expressions of the same protein, and see where is more blue, where more red, without complication of 3D structure. Easier and more informative than 'mean' diff value.  
