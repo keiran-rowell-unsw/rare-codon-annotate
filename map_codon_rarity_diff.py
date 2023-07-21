@@ -44,7 +44,7 @@ def replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out):
                 codon_rarity_in = codon_table_in[res_1let][codons[res_idx-1]] 
                 codon_rarity_out = codon_table_out[res_1let][codons[res_idx-1]]
                 codon_rarity_diff = codon_rarity_out - codon_rarity_in
-                rarity_sum += codon_rarity_diff #rarity_sum <- rarity_sum(prev) + codon_rarity_diff(now)
+                rarity_sum += abs(codon_rarity_diff) #rarity_sum <- rarity_sum(prev) + codon_rarity_diff(now)
                 for atom in residue:
                     atom.set_bfactor(codon_rarity_diff) #this is used in AlphaFold to colour residue position certainty
    
