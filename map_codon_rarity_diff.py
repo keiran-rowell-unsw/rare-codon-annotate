@@ -62,7 +62,7 @@ if args.nucseq is not None: #Need to decide which overrides
 codons = nucseq2codons(nucseq)
 #print(codons)
 avg_rarity_diff = replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out) 
-print(f'The mean difference of rarity of all codon positions between native and host is: {avg_rarity_diff}')
+print(f'The mean absolute difference of rarity of all codon positions between native and host is: {avg_rarity_diff}')
 io=PDBIO()
 io.set_structure(pdb_struct) 
 io.save(args.outfile)
