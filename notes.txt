@@ -16,5 +16,7 @@ Candidates:
 Long-term improvement:
   - Explore what a sensible rarity value cut-off is for model organisms, have option to only report rare codons
   - Link to Ramachandran of amino acids at structurally crucial positions
+    - There's a python package for Ramachandran plots generation called COOT. Input is a pdb file.     (sort out what pdb data we actually want, and how to link with nucleic acid seqs downloading them automatically is easy) 
+    - N.B. AlphaFold has shortcomings with predicting Ramachadran plots, but experimentally solved structures are more sensible for Ramachandran params 
   - *really* important candidate codons are *both* for amino acids that are at important positions *and* rare for that organism
   - Report these really important candidate codons in the python scripts so the user can inspect
