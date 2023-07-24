@@ -1,3 +1,5 @@
-taxID: 186540
+Ebola taxID: 186540
+Human taxID: 9606
+Sf9: 7108
 Codon table - standard 1: https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=186540&lvl=3&lin=f&keep=1&srchmode=1&unlock
 pymol: visualise rare codon colours with 'spectrum b, selection=ALL'
