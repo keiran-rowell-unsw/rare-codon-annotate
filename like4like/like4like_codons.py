@@ -24,6 +24,9 @@ with open('codon_tables.pkl', 'rb') as pickle_file:
 in_codon_table = codon_tables[args.inputtaxID]
 out_codon_table = codon_tables[args.outputtaxID]
 
+print(f'The input codon table is {in_codon_table}')
+print(f'The output codon table is {out_codon_table}')
+
 in_org_df = pd.DataFrame(columns=['Amino acid', args.inputtaxID])    
 out_org_df = pd.DataFrame(columns=['Amino acid', args.outputtaxID])    
 
