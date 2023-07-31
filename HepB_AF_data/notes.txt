@@ -6,3 +6,7 @@ Codon table - standard 1: https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.c
 
 good visualisation of codon rarity difference pdb files:
 spectrum b, blue_white_red, selection=ALL 
+
+visualisation by codon rarity as done by Kate:
+spectrum b, red_orange_yellow_white_green_cyan_blue_purple, minimum=0.05, maximum=0.12,
+==> has the advantage of having one colour to accommodate per %
