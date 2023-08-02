@@ -6,4 +6,4 @@ pymol: visualise rare codon colours with 'spectrum b, selection=ALL'
 pymol: visualise colour by diff.py 'spectrum b, red_white_blue, selection=ALL'
 
 enter in Pymol for colouring by rarity visualisation:
-spectrum b, red_dubnium_orange_yellow_deepolive_green_blue_curium_cyan_krypton_purple_white, minimum=0, maximum=0.12,
+spectrum b, red_salmon_orange_brightorange_yellow_limon_green_blue_teal_cyan_magenta_purple_white, minimum=0, maximum=0.12,
