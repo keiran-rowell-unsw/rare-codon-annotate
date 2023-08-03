@@ -7,6 +7,8 @@ from pathlib import Path
 import pickle
 import numpy
 import math
+import pprint
+from pprint import pformat #for pretty printing the codon tables
 
 parser = argparse.ArgumentParser(prog='codon_rarity_diff', description='mapping codon rarity difference between two organisms (e.g.  Ebola protein expressed in E. coli)')
 parser.add_argument('-nuc', '--nucseq',  type=str, help='A manually entered nucleic acid sequence to split into codons ') 
@@ -32,6 +34,8 @@ def nucseq2codons(nucseq):
     return codons
 
 def replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out): 
+    AA_info = ['Index,  AA, Codon,  Rarity change'] 
+ 
     a_idx = 0  # no neat way to link idx to enumerate
     res_idx = 0
     rarity_sum = 0 
@@ -44,25 +48,50 @@ def replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out):
                 codon_rarity_in = codon_table_in[res_1let][codons[res_idx-1]] 
                 codon_rarity_out = codon_table_out[res_1let][codons[res_idx-1]]
                 codon_rarity_diff = codon_rarity_out - codon_rarity_in
+                AA_info.append(f'{res_idx}, {res_1let}, {codons[res_idx-1]}, {round(codon_rarity_diff,3)}')
                 rarity_sum += abs(codon_rarity_diff) #rarity_sum <- rarity_sum(prev) + codon_rarity_diff(now)
                 for atom in residue:
                     atom.set_bfactor(codon_rarity_diff) #this is used in AlphaFold to colour residue position certainty
    
     avg_rarity_diff = round((rarity_sum/res_idx),3)
-    return(avg_rarity_diff)
+    return(AA_info, avg_rarity_diff)
+
+def save_log(outfile_name, taxIDin, taxIDout, codon_table_in, codon_table_out, avg_rarity_diff, nucseq):
+    if outfile_name.endswith('.pdb'):
+        logfile_name = outfile_name.replace('.pdb','.log')
+    else:
+        logfile_name = outfile_name + '.log'
+
+    logfile = Path(logfile_name)
+    with logfile.open("w") as logf:
+        logf.write('The mean absolute difference of rarity of all codon positions between native and host is:\n') 
+        logf.write(str(avg_rarity_diff))
+        logf.write('\n')
+        logf.write('\n')
+        logf.write(f'The codon table for input TaxID {args.taxIDin} is:\n')
+        logf.write(pprint.pformat(codon_table_in))
+        logf.write('\n')
+        logf.write('\n')
+        logf.write(f'The codon table for output TaxID {args.taxIDout} is:\n')
+        logf.write(pprint.pformat(codon_table_out))
+        logf.write('\n')
+        logf.write('\n')
+        logf.write(f'The nucleic acid sequence is:\n')
+        logf.write(nucseq)
+        logf.write('\n')
+        logf.write('\n')
+        logf.write('\n'.join(AA_info))
     
 pdbfile = Path(args.PDBID)
 codon_table_in, codon_table_out = load_codon_tables(args.codontables, args.taxIDin, args.taxIDout)
-#print(f'Codon fraction table for {args.taxID} is {codon_table}')
 pdb_struct = pdbfile2struct(pdbfile)
 if args.nucseq is not None: #Need to decide which overrides
     seq_record = SeqIO.read(args.nucseq, 'fasta') 
     nucseq = str(seq_record.seq).upper()
-   #print(f'The nucleic acid sequence is: {nucseq}')
 codons = nucseq2codons(nucseq)
-#print(codons)
-avg_rarity_diff = replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out) 
-print(f'The mean absolute difference of rarity of all codon positions between native and host is: {avg_rarity_diff}')
+AA_info, avg_rarity_diff = replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out) 
 io=PDBIO()
 io.set_structure(pdb_struct) 
 io.save(args.outfile)
+
+save_log(args.outfile, args.taxIDin, args.taxIDout, codon_table_in, codon_table_out, avg_rarity_diff, nucseq)
