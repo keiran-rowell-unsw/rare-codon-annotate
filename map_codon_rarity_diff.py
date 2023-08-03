@@ -66,3 +66,6 @@ print(f'The mean absolute difference of rarity of all codon positions between na
 io=PDBIO()
 io.set_structure(pdb_struct) 
 io.save(args.outfile)
+
+print(f'The codon table for TaxID {args.taxIDin} is {codon_table_in}')
+print(f'The codon table for TaxID {args.taxIDout} is {codon_table_out}')

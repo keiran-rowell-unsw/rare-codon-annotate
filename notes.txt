@@ -13,7 +13,12 @@ Candidates:
     - Succinate (e.g. 1NEK): 4 subunits joined to still keep an extended set of a-helices. Maybe too complex, but check at those hairpin turns
 
 
+Immediate improvement:
+  - Each program generates a .log file from the name specified by -o by the user. This prints all the info (codon tables, rarity and codon sequence at each amino acid index, mean scores)  
+
 Long-term improvement:
+  - Use the codon table of the organism, do seq codon search for <5% & <10%. They are probably there for a reason in the folding. Can plot white background with red higlights for <5% codons, and white with orange index highlights for <10%. Keep this consistent colour scheme. 
+    - Try this with the unable to express protein that is the heart of the HepB, that you could do with assays     
   - Could turn the rarity at each position into an array -> 2D 'stripe' of colours of those values.
   - You could then line up these 'stripes' of pixels vertically between different expressions of the same protein, and see where is more blue, where more red, without complication of 3D structure. Easier and more informative than 'mean' diff value. 
     - Use seismic matplotlib colorscheme: plot_color_gradients('Diverging', 'seismic') 
