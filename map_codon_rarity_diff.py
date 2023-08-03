@@ -48,7 +48,7 @@ def replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out):
                 codon_rarity_in = codon_table_in[res_1let][codons[res_idx-1]] 
                 codon_rarity_out = codon_table_out[res_1let][codons[res_idx-1]]
                 codon_rarity_diff = codon_rarity_out - codon_rarity_in
-                AA_info.append(f'{res_idx}, {res_1let}, {codons[res_idx-1]}, {round(codon_rarity_diff,3)}')
+                AA_info.append(f'{res_idx}, {res_1let}, {codons[res_idx-1]},  {round(codon_rarity_diff,3)}')
                 rarity_sum += abs(codon_rarity_diff) #rarity_sum <- rarity_sum(prev) + codon_rarity_diff(now)
                 for atom in residue:
                     atom.set_bfactor(codon_rarity_diff) #this is used in AlphaFold to colour residue position certainty
@@ -56,7 +56,7 @@ def replace_b_factor(pdb_struct, codons, codon_table_in, codon_table_out):
     avg_rarity_diff = round((rarity_sum/res_idx),3)
     return(AA_info, avg_rarity_diff)
 
-def save_log(outfile_name, taxIDin, taxIDout, codon_table_in, codon_table_out, avg_rarity_diff, nucseq):
+def save_log(outfile_name, taxIDin, taxIDout, codon_table_in, codon_table_out, avg_rarity_diff, nucseq, AA_info):
     if outfile_name.endswith('.pdb'):
         logfile_name = outfile_name.replace('.pdb','.log')
     else:
@@ -68,11 +68,11 @@ def save_log(outfile_name, taxIDin, taxIDout, codon_table_in, codon_table_out, a
         logf.write(str(avg_rarity_diff))
         logf.write('\n')
         logf.write('\n')
-        logf.write(f'The codon table for input TaxID {args.taxIDin} is:\n')
+        logf.write(f'The codon table for input TaxID {taxIDin} is:\n')
         logf.write(pprint.pformat(codon_table_in))
         logf.write('\n')
         logf.write('\n')
-        logf.write(f'The codon table for output TaxID {args.taxIDout} is:\n')
+        logf.write(f'The codon table for output TaxID {taxIDout} is:\n')
         logf.write(pprint.pformat(codon_table_out))
         logf.write('\n')
         logf.write('\n')
@@ -94,4 +94,4 @@ io=PDBIO()
 io.set_structure(pdb_struct) 
 io.save(args.outfile)
 
-save_log(args.outfile, args.taxIDin, args.taxIDout, codon_table_in, codon_table_out, avg_rarity_diff, nucseq)
+save_log(args.outfile, args.taxIDin, args.taxIDout, codon_table_in, codon_table_out, avg_rarity_diff, nucseq, AA_info)
