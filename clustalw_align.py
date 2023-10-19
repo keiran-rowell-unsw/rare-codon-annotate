@@ -18,6 +18,9 @@ def perform_alignment(input_file, output_file):
 input_file = input("Enter the input file name: ")
 output_file = input("Enter the output file name: ")
 
+# Indicating that the script is currently running/processing data
+print("Running alignment, this may take some time...")
+
 perform_alignment(input_file, output_file)
 
 # Print that the job has finished
