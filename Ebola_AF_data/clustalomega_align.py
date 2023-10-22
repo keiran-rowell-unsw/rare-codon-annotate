@@ -17,6 +17,7 @@ def perform_alignment(input_file, output_file):
             pbar.refresh()
     
     # Load the alignment
+    alignment = AlignIO.read(open(output_file), "fasta")
     alignment = AlignIO.read(open(output_file), "clustal")
     
     # Print the alignment
