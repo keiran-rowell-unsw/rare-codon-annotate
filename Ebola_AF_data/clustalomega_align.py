@@ -4,8 +4,8 @@ from tqdm import tqdm
 import subprocess
 
 def perform_alignment(input_file, output_file):
-    # Define the ClustalOmega command line with --clustal option
-    clustalo_cline = ClustalOmegaCommandline(infile=input_file, outfile=output_file, clustal=True, verbose=True, auto=True)
+    # Define the ClustalOmega command line
+    clustalo_cline = ClustalOmegaCommandline(infile=input_file, outfile=output_file, verbose=True, auto=True)
     
     # Start the ClustalOmega alignment as a subprocess
     process = subprocess.Popen(str(clustalo_cline), shell=True)
