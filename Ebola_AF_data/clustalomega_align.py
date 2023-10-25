@@ -30,7 +30,7 @@ def perform_alignment(input_file, output_file):
     print(alignment)
 
 # Prompt the user for the input and output file names
-input_file = input("Enter the input file name: ")
-output_file = input("Enter the output file name: ")
+input_file = input("Enter the input file name and end with .fasta: ")
+output_file = input("Enter the output file name and end with .aln: ")
 
 perform_alignment(input_file, output_file)
