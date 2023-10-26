@@ -16,21 +16,27 @@ def perform_alignment(input_file, output_file):
             pbar.update(1)
             pbar.refresh()
     
-    # Convert the output to Clustal format
-    temp_output_file = output_file + "_temp"
-    with open(output_file) as input_handle:
-        sequences = list(SeqIO.parse(input_handle, "fasta"))
-    with open(temp_output_file, "w") as output_handle:
-        SeqIO.write(sequences, output_handle, "clustal")
+    # Load the Clustalomega .aln output
+    clustal_alignment = AlignIO.read(open(output_file), "clustal")
     
-    # Load the alignment
-    alignment = AlignIO.read(open(temp_output_file), "clustal")
+    # Print the Clustalomega .aln alignment
+    print("Clustalomega .aln alignment:")
+    print(clustal_alignment)
     
-    # Print the alignment
-    print(alignment)
+    # Convert the output to MAF format
+    maf_output_file = output_file + ".maf"
+    with open(maf_output_file, "w") as output_handle:
+        SeqIO.write(clustal_alignment, output_handle, "maf")
+    
+    # Load the MAF alignment
+    maf_alignment = AlignIO.read(open(maf_output_file), "maf")
+    
+    # Print the MAF alignment
+    print("\nMAF alignment:")
+    print(maf_alignment)
 
 # Prompt the user for the input and output file names
-input_file = input("Enter the input file name and end with .fasta: ")
-output_file = input("Enter the output file name and end with .aln: ")
+input_file = input("Enter the input file name: ")
+output_file = input("Enter the output file name: ")
 
 perform_alignment(input_file, output_file)
