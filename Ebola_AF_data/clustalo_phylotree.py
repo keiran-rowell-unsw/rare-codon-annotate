@@ -19,7 +19,7 @@ def perform_alignment(input_file, output_file):
             pbar.refresh()
     
     # Load the Clustalomega .aln output
-    clustal_alignment = AlignIO.read(open(output_file), "clustal")
+    clustal_alignment = AlignIO.read(output_file, "clustal")
     
     # Print the Clustalomega .aln alignment
     print("Clustalomega .aln alignment:")
@@ -31,7 +31,7 @@ def perform_alignment(input_file, output_file):
         SeqIO.write(clustal_alignment, output_handle, "maf")
     
     # Load the MAF alignment
-    maf_alignment = AlignIO.read(open(maf_output_file), "maf")
+    maf_alignment = AlignIO.read(maf_output_file, "maf")
     
     # Print the MAF alignment
     print("\nMAF alignment:")
