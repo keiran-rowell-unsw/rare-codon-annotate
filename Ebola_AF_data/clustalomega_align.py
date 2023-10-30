@@ -2,8 +2,13 @@ from Bio import AlignIO, SeqIO
 from Bio.Align.Applications import ClustalOmegaCommandline
 from tqdm import tqdm
 import subprocess
+import os
 
-def perform_alignment(input_file, output_file):
+def perform_alignment(input_file):
+    # Create the output filenames by appending "_output" to the input filename
+    output_file = os.path.splitext(input_file)[0] + "_output.aln"
+    maf_output_file = os.path.splitext(input_file)[0] + "_output.maf"
+    
     # Define the ClustalOmega command line
     clustalo_cline = ClustalOmegaCommandline(infile=input_file, outfile=output_file, verbose=True, auto=True)
     
@@ -24,7 +29,6 @@ def perform_alignment(input_file, output_file):
     print(clustal_alignment)
     
     # Convert the output to MAF format
-    maf_output_file = output_file + ".maf"
     with open(maf_output_file, "w") as output_handle:
         SeqIO.write(clustal_alignment, output_handle, "maf")
     
@@ -35,8 +39,7 @@ def perform_alignment(input_file, output_file):
     print("\nMAF alignment:")
     print(maf_alignment)
 
-# Prompt the user for the input and output file names
+# Prompt the user for the input file name
 input_file = input("Enter the input file name: ")
-output_file = input("Enter the output file name: ")
 
-perform_alignment(input_file, output_file)
+perform_alignment(input_file)
