@@ -13,8 +13,8 @@ def perform_alignment(input_file):
     output_file = os.path.splitext(input_file)[0] + "_output.aln"
     maf_output_file = os.path.splitext(input_file)[0] + "_output.maf"
     
-    # Define the ClustalOmega command line
-    clustalo_cline = ClustalOmegaCommandline(infile=input_file, outfile=output_file, verbose=True, auto=True)
+    # Define the ClustalOmega command line with the --outfmt option
+    clustalo_cline = ClustalOmegaCommandline(infile=input_file, outfile=output_file, outfmt="clu", verbose=True, auto=True)
     
     # Start the ClustalOmega alignment as a subprocess
     process = subprocess.Popen(str(clustalo_cline), shell=True)
