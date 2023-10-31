@@ -1,3 +1,10 @@
+## VISUALISATIONS ##
+
+#The colour spectrum below is used to show rarity from 1-12%, going from red to blue:
+ spectrum b, red_magenta_purple_orange_brightorange_yellow_limon_green_cyan_teal_blue_white, minimum=0.01, maximum=0.12,
+
+## PROJECT DIRECTION ##
+
  Want to find some E. Coli proteins that has:
 1. A full nucleotide available (easier b.c. no splicing)
 2. A solved structure pdb file (no garuantee that the nucleotide seq is an exact link, if E coli should be close)
