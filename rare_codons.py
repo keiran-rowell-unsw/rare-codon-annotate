@@ -113,4 +113,4 @@ if RefSeq_nuc_ID is not None:
     nucseq = fetch_nucseq(RefSeq_nuc_ID)
     print(f'The nucleic acid sequence from RefSeq is: {nucseq}')
 codons = nucseq2codons(pdb_struct, nucseq)
-3replace_b_factor(pdb_struct, codons, codon_table)  
+replace_b_factor(pdb_struct, codons, codon_table)  

@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 import pickle 
+import pprint
 
 desc_string = '''Matches codon tables of two species in terms of the ordering within each species of fraction of the time codon encodes for an  amino acid.'''
 epilog_string = '''This is *not* codon optimisation, but instead an attempt to match like4like in terms of codon rarity.
@@ -26,6 +27,8 @@ out_codon_table = codon_tables[args.outputtaxID]
 
 print(f'The input codon table is {in_codon_table}')
 print(f'The output codon table is {out_codon_table}')
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(out_codon_table)
 
 in_org_df = pd.DataFrame(columns=['Amino acid', args.inputtaxID])    
 out_org_df = pd.DataFrame(columns=['Amino acid', args.outputtaxID])    
